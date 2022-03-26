@@ -13,10 +13,7 @@
 
           <ul class="error-messages">
             <template v-for="(messages, field) in errors">
-              <li
-                v-for="(messgae, index) of messages"
-                :key="index"
-              >
+              <li v-for="(messgae, index) of messages" :key="index">
                 {{ field }} {{ messgae }}
               </li>
             </template>
@@ -62,14 +59,14 @@
 </template>
 
 <script>
-import { login, register } from '@/api/user'
+import { login, register } from "@/api/user";
 
 // 仅在客户端加载 cookie
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = process.client ? require("js-cookie") : undefined;
 
 export default {
   name: "Login",
-  middleware: 'noAuthenticated',
+  middleware: "noAuthenticated",
   computed: {
     isLogin() {
       return this.$route.name === "login";
@@ -78,33 +75,31 @@ export default {
   data() {
     return {
       user: {
-        username: '',
+        username: "",
         email: "",
         password: "",
       },
-      errors: {} // 错误信息
+      errors: {}, // 错误信息
     };
   },
   methods: {
-    async onSubmit () {
+    async onSubmit() {
       try {
         // 提交表单请求登陆
-        const { data } = (
-          this.isLogin ?
-            await login({ user: this.user })
-            : await register({ user: this.user })
-        )
+        const { data } = this.isLogin
+          ? await login({ user: this.user })
+          : await register({ user: this.user });
         // 保存用户的登录状态
-        this.$store.commit('setUser', data.user)
+        this.$store.commit("setUser", data.user);
         // 为了防止页面刷新，数据丢失，需要持久化数据
-        Cookie.set('user', JSON.stringify(data.user))
+        Cookie.set("user", JSON.stringify(data.user));
         // 跳转到首页
-        this.$router.push('/')
+        this.$router.push("/");
       } catch (err) {
-        this.errors = err.response.data.errors
+        this.errors = err.response.data.errors;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
