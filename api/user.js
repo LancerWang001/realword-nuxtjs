@@ -17,5 +17,11 @@ export const register = (data) => request({
 // 订阅用户
 export const followUser = (username) => request({
 	method: 'POST',
-	url: `/profile/${username}/follow`
+	url: `/profiles/${username}/follow`
+})
+
+// 取消订阅用户
+export const unFollowUser = (username) => request({
+	method: 'DELETE',
+	url: `/profiles/${username}/follow`
 })

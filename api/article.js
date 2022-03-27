@@ -17,6 +17,26 @@ export const getYourArticles = (params) => request({
 	params,
 })
 
+// 删除文章
+export const delArticle = (slug) => request({
+	method: 'DELETE',
+	url: `/articles/${slug}`
+})
+
+// 发布文章
+export const publishArticle = (article) => request({
+	method: 'POST',
+	url: '/articles',
+	data: { article }
+})
+
+// 修改文章
+export const updateArticle = (article, slug) => request({
+	method: 'PUT',
+	url: `/articles/${slug}`,
+	data: { article }
+})
+
 // 添加点赞
 export const addFavorite = (slug) => request({
 	method: 'POST',

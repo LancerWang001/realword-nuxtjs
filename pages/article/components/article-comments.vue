@@ -11,7 +11,7 @@
       </div>
       <div class="card-footer">
         <img :src="user.image" class="comment-author-img" />
-        <div @click.stop="onAddComment" class="btn btn-sm btn-primary">Post Comment</div>
+        <button :disabled="isAddingComment" @click.prevent="onAddComment" class="btn btn-sm btn-primary">Post Comment</button>
       </div>
     </form>
 
@@ -41,13 +41,16 @@
           {{ comment.author.username }}
         </nuxt-link>
         <span class="date-posted">{{ comment.createdAt | date }}</span>
+				<span v-if="isCurrentUser(comment.author.username)" class="mod-options" @click="onDelComment(comment.id)">
+					<i class="ion-trash-a" ></i>
+				</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getComments, addComment } from '@/api/article'
+import { getComments, addComment, delComment } from '@/api/article'
 import { mapState } from 'vuex'
 
 export default {
@@ -64,7 +67,9 @@ export default {
 	data () {
 		return {
 			comments: [], // 文章列表
-			comment: '' // 当前评论
+			comment: '', // 当前评论
+			isDeletingComment: false,
+			isAddingComment: false
 		}
 	},
 	async mounted () {
@@ -74,19 +79,33 @@ export default {
 	},
 	methods: {
 		async onAddComment () {
-			if (!this.comment) return;
-			const { slug } = this.article
-			const { data: { comment } } = await addComment(slug, this.comment)
-			this.comments.push(comment)
-			this.comment = ''
+			try {
+				this.isAddingComment = true
+				if (!this.comment) return;
+				const { slug } = this.article
+				const { data: { comment } } = await addComment(slug, this.comment)
+				this.comments.push(comment)
+				this.comment = ''
+			} finally {
+				this.isAddingComment = false
+			}
 		},
 		async onDelComment (id) {
-			const { slug } = this.article
-			await delComment(slug, id)
-			const pos = this.comments.findIndex(
-				({ id: delId }) => id === delId
-			)
-			this.comments.splice(pos, 1)
+			if (this.isDeletingComment) return;
+			try {
+				this.isDeletingComment = true
+				const { slug } = this.article
+				await delComment(slug, id)
+				const pos = this.comments.findIndex(
+					({ id: delId }) => id === delId
+				)
+				this.comments.splice(pos, 1)
+			} finally {
+				this.isDeletingComment = false
+			}
+		},
+		isCurrentUser (username) {
+			return username === this.user.username
 		}
 	}
 };

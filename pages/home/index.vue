@@ -1,6 +1,6 @@
 <template>
   <div class="home-page">
-    <div class="banner">
+    <div v-if="!user" class="banner">
       <div class="container">
         <h1 class="logo-font">conduit</h1>
         <p>A place to share your knowledge.</p>
@@ -84,6 +84,15 @@
               <h1>{{ article.title }}</h1>
               <p>{{ article.description }}</p>
               <span>Read more...</span>
+              <ul class="tag-list">
+                <li
+                  v-for="tag of article.tagList"
+                  :key="tag"
+                  class="tag-default tag-pill tag-outline"
+                >
+                  {{ tag }}
+                </li>
+              </ul>
             </nuxt-link>
           </div>
 
@@ -151,11 +160,12 @@ import { mapState } from "vuex";
 export default {
   name: "HomeIndex",
   watchQuery: ["page", "limit", "tag", "tab"],
-  async asyncData({ query }) {
+  async asyncData({ query, store }) {
     const page = Number.parseInt(query.page) || 1;
     const limit = Number.parseInt(query.limit) || 20;
     const tag = query.tag;
-    const tab = query.tab ?? "global_feed";
+    const defaultTab = store.state.user ? "your_feed" : "global_feed";
+    const tab = query.tab ?? defaultTab;
     const offset = (page - 1) * limit || 0;
     const articleService =
       tab === "your_feed"
