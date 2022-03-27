@@ -90,9 +90,13 @@ export default {
           ? await login({ user: this.user })
           : await register({ user: this.user });
         // 保存用户的登录状态
-        this.$store.commit("setUser", data.user);
+        const user = {
+          ...this.user,
+          ...data.user,
+        };
+        this.$store.commit("setUser", user);
         // 为了防止页面刷新，数据丢失，需要持久化数据
-        Cookie.set("user", JSON.stringify(data.user));
+        Cookie.set("user", JSON.stringify(user));
         // 跳转到首页
         this.$router.push("/");
       } catch (err) {

@@ -22,6 +22,7 @@ export const actions = {
 		if (req.headers.cookie) {
 			// 使用 cookieparser 把 cookie 字符串转为 Javascript 对象
 			const parsed = cookieParser.parse(req.headers.cookie)
+			console.log(parsed)
 			try {
 				user = JSON.parse(parsed.user)
 			} catch {

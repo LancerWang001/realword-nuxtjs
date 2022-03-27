@@ -13,3 +13,16 @@ export const register = (data) => request({
 	url: '/users',
 	data
 })
+
+// 获取当前用户信息
+export const getUser = () => request({
+	method: 'GET',
+	url: '/user'
+})
+
+// 修改当前用户信息
+export const updateUser = (user) => request({
+	method: 'PUT',
+	url: '/user',
+	data: { user }
+})
