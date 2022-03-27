@@ -70,7 +70,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { followUser, unFollowUser } from '@/api/user'
+import { followUser, unFollowUser } from '@/api/profile'
 import { addFavorite, deleteFavorite, delArticle } from '@/api/article'
 
 export default {
